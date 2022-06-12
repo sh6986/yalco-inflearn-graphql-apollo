@@ -1,2 +1,2 @@
-const database = require('./database');
+const database = require("./database");
 console.log(database.supplies);

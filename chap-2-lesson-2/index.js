@@ -1,5 +1,6 @@
-const database = require('./database')
-const { ApolloServer, gql } = require('apollo-server')
+const database = require("./database");
+const { ApolloServer, gql } = require("apollo-server");
+const { supplies } = require("./database");
 const typeDefs = gql`
   type Query {
     teams: [Team]
@@ -27,26 +28,27 @@ const typeDefs = gql`
     id: String
     team: Int
   }
-`
+`;
+
 const resolvers = {
   Query: {
-    teams: () => database.teams
-      .map((team) => {
-        team.supplies = database.supplies
-        .filter((supply) => {
-            return supply.team === team.id
-        })
-        return team
-    }),
-    team: (parent, args, context, info) => database.teams
-      .filter((team) => {
-        return team.id === args.id
+    teams: () =>
+      database.teams.map((team) => {
+        team.supplies = database.supplies.filter((supply) => {
+          return supply.team === team.id;
+        });
+        return team;
+      }),
+    team: (parent, args, context, info) =>
+      database.teams.filter((team) => {
+        return team.id === args.id;
       })[0],
     equipments: () => database.equipments,
-    supplies: () => database.supplies
-  }
-}
-const server = new ApolloServer({ typeDefs, resolvers })
+    supplies: () => database.supplies,
+  },
+};
+
+const server = new ApolloServer({ typeDefs, resolvers });
 server.listen().then(({ url }) => {
-console.log(`🚀  Server ready at ${url}`)
-})
+  console.log(`Server ready at ${url}`);
+});
